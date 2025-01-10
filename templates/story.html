@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>故事書</title>
+</head>
+<style>
+    /* 更新後的導航欄設計 */
+    .navbar {
+            display: flex;
+            flex: 0 0 80px; /* 固定高度 */
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 1rem;  /* 上下 0.5rem，左右 1rem */
+            background-color: #8d6e63; /* 溫暖的棕色調 */
+            color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+/* 左侧区域 */
+.navbar-left {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-left img {
+    height: 70px; /* 设置 logo 图片的高度 */
+    margin-right: 10px; /* 设置 logo 和标题之间的间距 */
+    display: flex;
+    align-items: center;
+    gap: 1rem;  /* 增加圖片和文字之間的間隔 */
+}
+
+/* 右侧区域 */
+.navbar-right {
+    display: flex;
+    align-items: center;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background-color: #333;
+    color: white;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropbtn:hover {
+    background-color: #575757; /* 悬停时改变按钮背景色 */
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #333;
+    min-width: 160px;
+    z-index: 1;
+    /* 确保下拉菜单不会超出屏幕右边 */
+    right: 0; 
+    transform: translateX(0);
+}
+
+.dropdown-content a {
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #575757;
+}
+
+/* 在鼠标悬停时显示下拉菜单 */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* 防止下拉菜单过于靠右 */
+.dropdown-content {
+    left: auto;
+    right: 0;
+    transform: translateX(-10px); /* 调整下拉菜单相对于按钮的位置 */
+}
+
+        .navbar h1 {
+            font-size: 1.5rem;
+            color: #ffffff;
+            margin: 0;  /* 確保文字上下不會有額外的間隔 */
+        }
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #fdf3e3;
+    color: #333;
+    text-align: center;
+    display: flex;
+}
+
+.story-page {
+    margin: 40px auto; /* 设置上下外边距，顶端留 40px 空间 */
+    width: 80%;
+}
+
+/*.display_side img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #ccc;
+}*/
+
+.navigation a {
+    margin: 10px;
+    padding: 10px 20px;
+    background-color: #f39c12;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropbtn {
+        background-color: #4CAF50; /* 背景颜色 */
+        color: white; /* 字体颜色 */
+        padding: 10px 16px;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        border-radius: 5px;
+    }
+
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+
+    .dropdown-content a:hover {
+        background-color: #f1f1f1;
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    .dropdown:hover .dropbtn {
+        background-color: #3e8e41;
+    }
+    .display_side {
+    display: flex;
+    align-items: center; /* 垂直居中对齐 */
+    justify-content: space-between; /* 左右分布 */
+    border: 1px solid #ccc; /* 外框样式 */
+    padding: 20px;
+    margin: 80px auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 添加阴影 */
+    border-radius: 10px; /* 圆角 */
+    background-color: #f9f9f9; /* 背景色 */
+}
+
+.display_side-left img {
+    max-width: 100%; /* 图片占容器宽度的40% */
+    height: auto;
+    border-radius: 5px; /* 图片圆角 */
+    object-fit: cover; /* 确保图片在容器内保持比例裁剪 */
+}
+
+.display_side-left,
+.display_side-right {
+    flex: 1; /* 各占50%宽度 */
+    padding: 10px; /* 内边距 */
+}
+
+.display_side-right p {
+    margin-bottom: 10px;
+    font-size: 16px; /* 调整文字大小 */
+}
+
+.display_side-right audio {
+    width: 100%; /* 音频播放器宽度适应 */
+}
+
+
+
+</style>
+<body>
+    <!-- 導航欄 -->
+  <div class="navbar">
+    <div class="navbar-left">
+        <img src="{{ url_for('static', filename='images/theme_image.jpg') }}" alt="Logo">
+        <h1>影音留痕:穿越時空的陪伴</h1>
+    </div>
+    <div class="navbar-right">
+        <div class="dropdown">
+            <button class="dropbtn">{{ username }}</button>
+            <div class="dropdown-content">
+                <a href="{{ url_for('voice') }}">語音模仿</a> <!-- 登出按钮 -->
+                <a href="{{ url_for('home') }}">生成圖片</a> <!-- 登出按钮 -->
+                <a href="{{ url_for('menu') }}">回到首頁</a> <!-- 登出按钮 -->
+                <a href="{{ url_for('logout') }}">登出</a> <!-- 登出按钮 -->
+            </div>
+        </div>
+    </div>
+  </div>
+    <div class="story-page">
+        <div class="display_side">
+            <div class="display_side-left">
+                <a href="{{ page_data['image_url'] }}" download="downloaded_image.jpg">
+                    <img src="{{ page_data['image_url'] }}" alt="生成的圖片">
+                </a>
+            </div>
+            <br>
+            <br>
+            <br>
+            <div class="display_side-right">
+                <p>{{ page_data['content'] }}</p>
+                <audio controls>
+                    <source src="{{ url_for('static', filename='uploaded_wav/' + page_data['audio_file']) }}" type="audio/wav">
+                    您的瀏覽器不支援音訊播放。
+                </audio>
+            </div>
+        </div>
+        
+        <div class="navigation">
+            <!-- 删除当前页面的按钮 -->
+            <form action="{{ url_for('delete_page', page_number=page_number) }}" method="POST" style="display:inline;" id="deleteForm">
+                <a href="javascript:void(0);" id="deleteButton" class="btn btn-danger">刪除頁面</a>
+            </form>
+
+            <!-- 如果不是第一页，显示上一页链接 -->
+            {% if prev_page_number is not none %}
+            <a href="{{ url_for('story', username=username, page_number=prev_page_number) }}">上一頁</a>
+            {% endif %}
+        
+            {% if next_page_number is not none %}
+                <a href="{{ url_for('story', username=username, page_number=next_page_number) }}">下一頁</a>
+            {% endif %}
+
+            <!-- 返回生成更多图片的按钮 -->
+            <a id="button" href="{{ url_for('index') }}">生成更多圖片</a>
+
+            <!-- 只在最後一頁顯示保存頁面按鈕 -->
+            {% if next_page_number is none %}
+            <a href="{{ url_for('menu') }}" id="saveButton" class="btn btn-success">保存頁面</a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <script>
+        // 监听点击事件，触发表单提交
+        document.getElementById('deleteButton').addEventListener('click', function() {
+            // 提交表单
+            if (confirm('您確定要刪除此頁面嗎？')){
+            var form = document.getElementById('deleteForm');
+            var formData = new FormData(form);
+            
+            fetch(form.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.redirect_url) {
+                    // 删除成功后，跳转到返回的 URL
+                    window.location.href = data.redirect_url;
+                } else {
+                    alert(data.message || '發生未知錯誤');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('刪除失敗，請稍後再試！');
+            });
+        }
+        });
+    </script>
+    <script>
+        let audio;
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!sessionStorage.getItem('audioInitialized')) {
+                audio = new Audio('static/audio/background_music.mp3');
+                audio.loop = true;
+                audio.volume = 0.3;
+                audio.play().then(() => {
+                    sessionStorage.setItem('audioInitialized', 'true');
+                    sessionStorage.setItem('audioTime', '0');
+                }).catch((error) => {
+                    console.log('Auto-play was prevented. User interaction is required to play the audio.', error);
+                });
+            } else {
+                audio = new Audio('static/audio/background_music.mp3');
+                audio.loop = true;
+                audio.volume = 0.3;
+                audio.currentTime = parseFloat(sessionStorage.getItem('audioTime')) || 0;
+                audio.play().catch((error) => {
+                    console.log('Auto-play was prevented. User interaction is required to play the audio.', error);
+                });
+            }
+    
+            // 確保用戶交互後播放音樂
+            document.body.addEventListener('click', () => {
+                if (audio.paused) {
+                    audio.play().catch((error) => {
+                        console.log('Failed to play the audio after user interaction.', error);
+                    });
+                }
+            });
+        });
+    
+        window.addEventListener('beforeunload', () => {
+            sessionStorage.setItem('audioTime', audio.currentTime);
+        });
+    </script>
+    <script>
+        // 當頁面加載完成後綁定事件
+document.addEventListener('DOMContentLoaded', () => {
+    const prevPageLink = document.querySelector('#prevPage');
+    const nextPageLink = document.querySelector('#nextPage');
+
+    // 處理上一頁
+    if (prevPageLink) {
+        prevPageLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const prevUrl = prevPageLink.getAttribute('href');
+            if (prevUrl) {
+                fetch(prevUrl)
+                    .then(response => response.text())
+                    .then(html => {
+                        document.body.innerHTML = html;
+                    })
+                    .catch(error => console.error('上一頁加載失敗:', error));
+            }
+        });
+    }
+
+    // 處理下一頁
+    if (nextPageLink) {
+        nextPageLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const nextUrl = nextPageLink.getAttribute('href');
+            if (nextUrl) {
+                fetch(nextUrl)
+                    .then(response => response.text())
+                    .then(html => {
+                        document.body.innerHTML = html;
+                    })
+                    .catch(error => console.error('下一頁加載失敗:', error));
+            }
+        });
+    }
+});
+
+    </script>
+    
+</body>
+
+</html>

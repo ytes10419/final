@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>影音留痕:回憶之旅</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* 更新後的導航欄設計 */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 1rem;
+            background-color: #8d6e63;
+            color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar-logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .navbar-logo img {
+            height: 50px;
+        }
+
+        .navbar h1 {
+            font-size: 1.5rem;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        /* 主要樣式 */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, #f7e7d1, #f1cbbd);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+            padding-top: 80px;
+            transition: background 1s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .container {
+            width: 80%;
+            max-width: 900px;
+            padding: 1.5rem;
+            background: rgba(255, 248, 225, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5d1a1;
+            transition: transform 0.3s, background 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 240, 205, 0.95);
+        }
+
+        .container h1 {
+            font-size: 2.4rem;
+            margin-bottom: 1rem;
+            color: #8d6e63;
+            text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #6b6b6b;
+            line-height: 1.6;
+            animation: slideIn 1.5s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+
+        .dialog-section {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(255, 235, 198, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5d1a1;
+            transition: background 0.3s;
+            position: relative;
+        }
+
+        .dialog-section:hover {
+            background: rgba(255, 225, 178, 0.95);
+        }
+
+        .dialog-text {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: #5e5e5e;
+            text-align: left;
+            animation: fadeInDialog 1s ease-in-out;
+            margin-top: 1rem;
+        }
+
+        @keyframes fadeInDialog {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .dialog-img {
+            width: 100%;
+            max-width: 700px;
+            height: auto;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            filter: grayscale(20%);
+            transition: filter 0.3s ease;
+        }
+
+        .dialog-img:hover {
+            filter: grayscale(0%);
+        }
+
+        .dialog-btn {
+            background-color: #4e342e;
+            color: #ffffff;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 1rem;
+            box-shadow: 0 4px 12px rgba(78, 52, 46, 0.4);
+            position: relative;
+            z-index: 1;
+        }
+
+        .dialog-btn:hover {
+            background-color: #3e2723;
+            transform: translateY(-2px);
+        }
+
+        .start-btn {
+            background-color: #ff9c56;
+            color: #ffffff;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(255, 156, 86, 0.4);
+            margin-top: 1.5rem;
+            animation: bounce 2s infinite;
+        }
+
+        .start-btn:hover {
+            background-color: #f88f3b;
+            transform: translateY(-2px);
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 導航欄 -->
+    <div class="navbar">
+        <div class="navbar-logo">
+            <img src="static/images/theme_image.jpg" alt="Logo">
+            <h1>影音留痕:穿越時空的陪伴</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>朵朵的回憶之旅</h1>
+        <p>這是一段充滿愛與感動的故事，也許您也曾經有過這樣的時刻，想念那些已經逝去的愛人。讓我們帶您進入這段旅程，看看科技如何幫助您重溫這些珍貴的時光。</p>
+
+        <div class="dialog-section" id="dialog-section">
+            <img src="static/images/intro.jpg" alt="小雅和祖母" class="dialog-img">
+            <p class="dialog-text" id="dialog-text">「您是否也想再聽到那熟悉的聲音？想再次感受到那份溫暖的陪伴？」</p>
+            <button class="dialog-btn" onclick="showNextDialog()">是的，我想了解更多</button>
+        </div>
+
+        <script>
+            let dialogIndex = 0;
+            const dialogs = [
+                "「朵朵在祖母離世後，總是思念著那份溫暖的聲音和陪伴。」",
+                "「透過這個網站，朵朵可以讓祖母的照片重新賦予聲音和生命，重新聽到那熟悉的話語。」",
+                "「我們希望幫助您和朵朵一樣，穿越時空，重拾那些愛與關懷，讓愛永遠伴隨著您。」"
+            ];
+
+            function showNextDialog() {
+                if (dialogIndex < dialogs.length) {
+                    const dialogText = document.getElementById('dialog-text');
+                    dialogText.textContent = dialogs[dialogIndex];
+                    dialogIndex++;
+                    const dialogSection = document.getElementById('dialog-section');
+                    dialogSection.style.animation = 'fadeInDialog 1s ease-in-out';
+                } else {
+                    document.querySelector('.dialog-section').style.display = 'none';
+                    const startButton = document.createElement('button');
+                    startButton.className = 'start-btn';
+                    startButton.textContent = '立即開始';
+                    startButton.onclick = () => window.location.href = '/login';
+                    document.querySelector('.container').appendChild(startButton);
+                }
+            }
+
+            // 添加與使用者的互動功能
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' && dialogIndex < dialogs.length) {
+                    showNextDialog();
+                }
+            });
+
+            document.querySelector('.dialog-btn').addEventListener('mouseover', () => {
+                document.querySelector('.dialog-btn').style.transform = 'scale(1.1)';
+            });
+
+            document.querySelector('.dialog-btn').addEventListener('mouseout', () => {
+                document.querySelector('.dialog-btn').style.transform = 'scale(1)';
+            });
+
+            // 新增背景音樂功能並保持在不同頁面播放
+            let audio;
+            document.addEventListener('DOMContentLoaded', () => {
+                audio = new Audio('static/audio/background_music.mp3');
+                audio.loop = true;
+                audio.volume = 0.3;
+
+                // 嘗試自動播放音樂
+                audio.play().then(() => {
+                    sessionStorage.setItem('audioInitialized', 'true');
+                    sessionStorage.setItem('audioTime', '0');
+                }).catch((error) => {
+                    console.log('Auto-play was prevented. User interaction is required to play the audio.', error);
+                });
+
+                if (sessionStorage.getItem('audioInitialized') === 'true') {
+                    audio.currentTime = parseFloat(sessionStorage.getItem('audioTime')) || 0;
+                    audio.play().catch((error) => {
+                        console.log('Auto-play was prevented. User interaction is required to play the audio.', error);
+                    });
+                }
+
+                // 確保用戶交互後播放音樂
+                document.body.addEventListener('click', () => {
+                    if (audio.paused) {
+                        audio.play().catch((error) => {
+                            console.log('Failed to play the audio after user interaction.', error);
+                        });
+                    }
+                });
+            });
+
+            window.addEventListener('beforeunload', () => {
+                sessionStorage.setItem('audioTime', audio.currentTime);
+            });
+        </script>
+    </div>
+</body>
+</html>

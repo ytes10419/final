@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生成模型</title>
+</head>
+<body>
+    <h1>生成模型</h1>
+    <form id="generateForm">
+        <label for="userId">用户ID：</label>
+        <input type="text" id="userId" name="userId" placeholder="请输入用户ID" required>
+        <br>
+        <label for="version">模型版本：</label>
+        <input type="text" id="version" name="version" placeholder="请输入模型版本" required>
+        <br>
+        <button type="submit">生成模型</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById("generateForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const userId = document.getElementById("userId").value;
+            const version = document.getElementById("version").value;
+
+            // 构建请求体
+            const requestData = {
+                userId: userId,
+                version: version
+            };
+
+            try {
+                // 发送 POST 请求到后端
+                const response = await fetch("/generate-model", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                // 解析响应
+                const result = await response.json();
+                
+                // 显示生成的训练 ID 和模型版本
+                if (response.ok) {
+                    alert(`训练 ID: ${result.training_id}\n模型版本: ${result.version}`);
+                    document.getElementById("result").innerHTML = `模型生成成功！<br>训练 ID: ${result.training_id}<br>模型版本: ${result.version}`;
+                } else {
+                    alert(result.message || "生成模型失败");
+                }
+
+            } catch (error) {
+                alert("请求失败，请重试！");
+            }
+        });
+    </script>
+</body>
+</html>

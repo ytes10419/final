@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Generated Storybook</title>
+    <!-- 引入 html2canvas 和 jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    /* 更新後的導航欄設計 */
+    .navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;  /* 上下 0.5rem，左右 1rem */
+        background-color: #8d6e63; /* 溫暖的棕色調 */
+        color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        position: fixed;
+        width: 100%;
+        top: 0;
+        left: 0;
+        z-index: 10;
+    }
+
+    .navbar-logo {
+        display: flex;
+        align-items: center;
+        gap: 1rem;  /* 增加圖片和文字之間的間隔 */
+    }
+
+    .navbar-logo img {
+        height: 70px; /* 調整 Logo 大小 */
+    }
+
+    .navbar h1 {
+        font-size: 1.5rem;
+        color: #ffffff;
+        margin: 0;  /* 確保文字上下不會有額外的間隔 */
+    }
+
+    /* 主要樣式 */
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f7f1e3; /* 溫暖的背景顏色 */
+        color: #333;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        text-align: center;
+        animation: fadeIn 1s ease-in-out;
+        padding-top: 80px; /* 避免導航欄遮擋內容 */
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .container {
+        width: 55%;
+        padding: 2.5rem;
+        background: #fff8e1; /* 淺黃色背景 */
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e5d1a1;
+        transition: transform 0.3s;
+    }
+
+    .container:hover {
+        transform: translateY(-5px);
+    }
+
+    h1 {
+        font-size: 2.4rem;
+        margin-bottom: 1.8rem;
+        color: #8d6e63;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+    }
+
+    label {
+        font-size: 1.3rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: #5d4037;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select, textarea {
+        width: 100%;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid #d7c4a9;
+        border-radius: 6px;
+        background: #fdf5e6;
+        color: #333;
+        font-size: 1rem;
+        transition: background-color 0.3s ease;
+    }
+
+    input:focus, textarea:focus, select:focus {
+        background: #ffecb3;
+        outline: none;
+    }
+
+    button {
+        align-self: center;
+        background-color: #ffab91;
+        color: #ffffff;
+        border: none;
+        padding: 0.9rem 2.5rem;
+        border-radius: 6px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+        background-color: #ff8a65;
+        transform: translateY(-2px);
+    }
+
+    /* 將 <a> 標籤樣式設為像按鈕 */
+    #button {
+        display: inline-block;  /* 讓 <a> 標籤像按鈕 */
+        background-color: #ffab91;
+        color: #ffffff;
+        padding: 0.9rem 2.5rem;
+        border-radius: 6px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        text-align: center;
+        text-decoration: none;  /* 去掉鏈接的下劃線 */
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    #button:hover {
+        background-color: #ff8a65;
+        transform: translateY(-2px);
+    }
+</style>
+<body>
+
+    <!-- 導航欄 -->
+    <div class="navbar">
+        <div class="navbar-logo">
+            <img src="static/images/theme_image.jpg" alt="Logo"> <!-- 替換為 Logo 路徑 -->
+            <h1>影音留痕:穿越時空的陪伴</h1>
+        </div>
+    </div>
+    <div class="container">
+        <h1>生成圖片</h1>
+        <p id="page-number">頁碼: 1</p>
+
+        <div class="card" id="card"> <!-- 確保這裡有 id="card" -->
+            <div class="imgBox" id="imgBox">
+                <img id="current-image" src="{{ image_url }}" alt="Generated Image">
+            </div>
+            <div class="contents">
+                <p id="current-story">{{ story }}</p>
+            </div>
+        </div>
+
+        <div class="pagination">
+            <button id="prev" onclick="prevPage()">上一頁</button>
+            <button id="next" onclick="nextPage()">下一頁</button>
+            <button id="delete" onclick="deletePage()">刪除生成的圖片</button>
+            <a id="button" href="{{ url_for('index') }}">生成更多圖片</a>
+            <button id="export-pdf" onclick="exportPDF()">導出 PDF</button> <!-- 新增導出 PDF 按鈕 -->
+        </div>
+    </div>
+
+    <script>
+        let scenes = JSON.parse(localStorage.getItem('generatedScenes')) || [];
+
+        // 主題圖片和主題故事
+        const themeImage = "{{ url_for('static', filename='images/theme_image.jpg') }}";
+        const themeStory = '開始創造屬於我們的故事';
+
+        if (!localStorage.getItem('themeAdded')) {
+            scenes.unshift({ image: themeImage, story: themeStory });
+            localStorage.setItem('generatedScenes', JSON.stringify(scenes));
+            localStorage.setItem('themeAdded', 'true');
+        }
+
+        scenes.push({ image: "{{ image_url }}", story: "{{ story }}" });
+        localStorage.setItem('generatedScenes', JSON.stringify(scenes));
+
+        let currentPage = 0;
+
+        function renderCurrentScene() {
+            const currentImage = document.getElementById('current-image');
+            const currentStory = document.getElementById('current-story');
+            const pageNumber = document.getElementById('page-number');
+
+            if (scenes.length === 0) return;
+
+            currentImage.src = scenes[currentPage].image;
+            currentStory.innerText = scenes[currentPage].story;
+            pageNumber.innerText = `頁碼: ${currentPage + 1}`;
+
+            document.getElementById('prev').disabled = currentPage === 0;
+            document.getElementById('next').disabled = currentPage === scenes.length - 1;
+        }
+
+        function nextPage() {
+            if (currentPage < scenes.length - 1) {
+                currentPage++;
+                flipCard();
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                flipCard();
+            }
+        }
+
+        function flipCard() {
+            const card = document.getElementById('card');
+            card.classList.add('flip');
+            setTimeout(() => {
+                renderCurrentScene();
+                card.classList.remove('flip');
+            }, 600);
+        }
+
+        function deletePage() {
+        if (scenes.length > 1) {  // 至少保留第一頁的圖片
+            scenes.pop();
+            localStorage.setItem('generatedScenes', JSON.stringify(scenes));
+            currentPage = Math.max(currentPage - 1, 0);
+            renderCurrentScene();
+        }
+        }
+
+
+        function exportPDF() {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+            let yOffset = 10;
+
+            scenes.forEach((scene, index) => {
+                const card = document.getElementById('card'); // 獲取包含圖片的容器
+
+                html2canvas(card, { useCORS: true }).then((canvas) => {
+                    const imgData = canvas.toDataURL("image/jpeg", 1.0);
+                    const imgWidth = 190;
+                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                    if (index !== 0) {
+                        pdf.addPage();
+                        yOffset = 10;
+                    }
+
+                    pdf.addImage(imgData, "JPEG", 10, yOffset, imgWidth, imgHeight);
+                    yOffset += imgHeight + 10;
+                    pdf.setFontSize(12);
+                    pdf.text(scene.story, 10, yOffset + imgHeight + 10);
+
+                    if (index === scenes.length - 1) {
+                        pdf.save("storybook.pdf");
+                    }
+                });
+            });
+        }
+
+        renderCurrentScene();
+    </script>
+<script>
+    let audio;
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!sessionStorage.getItem('audioInitialized')) {
+            audio = new Audio('static/audio/background_music.mp3');
+            audio.loop = true;
+            audio.volume = 0.3;
+            audio.play().then(() => {
+                sessionStorage.setItem('audioInitialized', 'true');
+                sessionStorage.setItem('audioTime', '0');
+            }).catch((error) => {
+                console.log('Auto-play was prevented. User interaction is required to play the audio.', error);
+            });
+        } else {
+            audio = new Audio('static/audio/background_music.mp3');
+            audio.loop = true;
+            audio.volume = 0.3;
+            audio.currentTime = parseFloat(sessionStorage.getItem('audioTime')) || 0;
+            audio.play().catch((error) => {
+                console.log('Auto-play was prevented. User interaction is required to play the audio.', error);
+            });
+        }
+
+        // 確保用戶交互後播放音樂
+        document.body.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play().catch((error) => {
+                    console.log('Failed to play the audio after user interaction.', error);
+                });
+            }
+        });
+    });
+
+    window.addEventListener('beforeunload', () => {
+        sessionStorage.setItem('audioTime', audio.currentTime);
+    });
+</script>
+
+</body>
+</html>
